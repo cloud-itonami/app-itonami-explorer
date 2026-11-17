@@ -1,1 +1,1 @@
-{:schema "etzhayyim.repository/readme-v1" :name "com-etzhayyim-app-explorer" :kind :application :source "etzhayyim/root/60-apps/etzhayyim-project-explorer"}
+{:schema "itonami.repository/readme-v1" :name "app-itonami-explorer" :kind :application :source "itonami/root/60-apps/itonami-project-explorer"}

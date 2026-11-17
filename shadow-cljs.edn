@@ -1,4 +1,4 @@
-;; etzhayyim-project-explorer — apex SPA (ADR-2606201610)
+;; itonami-project-explorer — apex SPA (ADR-2606201610)
 ;;
 ;; Three browser-side, serverless views over the organism:
 ;;   /          → Organism   (Tree-of-Life + aliveness 5-tuple, default landing)
@@ -7,7 +7,7 @@
 ;;
 ;; Stack mirrors the yoro cljs harness: Reagent 1.2 + re-frame 1.4 + shadow-cljs
 ;; :browser. All reads are content-addressed/static (served by the apex
-;; etzhayyim-did-web Worker at /kotoba/* and /organism/*); the browser does the
+;; itonami-did-web Worker at /kotoba/* and /organism/*); the browser does the
 ;; decode/compute/layout. No backend in this app.
 ;;
 ;; dev:   npm run dev    (amu compile --target wasm32-browser app → :dev-http 8710, push-state)
@@ -41,13 +41,13 @@
   {:target :browser
    :output-dir "public/js"
    :asset-path "/js"
-   :modules {:main {:init-fn etzhayyim.explorer.core/init!}}
-   :devtools {:after-load etzhayyim.explorer.core/mount-root}
+   :modules {:main {:init-fn itonami.explorer.core/init!}}
+   :devtools {:after-load itonami.explorer.core/mount-root}
    :closure-defines
    ;; Same-origin in production (apex Worker serves the SPA + /organism + /kotoba).
    ;; Override for local dev:  amu compile --target wasm32-browser app --config-merge ...
    ;; or set window.__DATA_BASE__ in index.html.
-   {etzhayyim.explorer.data/DATA-BASE ""}}
+   {itonami.explorer.data/DATA-BASE ""}}
 
   :test
   {:target :node-test

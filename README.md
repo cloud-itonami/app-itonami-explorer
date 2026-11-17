@@ -1,8 +1,8 @@
-# etzhayyim-project-explorer
+# itonami-project-explorer
 
-The **etzhayyim.com apex** SPA — a serverless, browser-side view of the living
+The **itonami.cloud apex** SPA — a serverless, browser-side view of the living
 organism, replacing the yoro bsky AppView at the apex (yoro lives on at
-`yoro.etzhayyim.com`). Design: **ADR-2606201610**.
+`yoro.itonami.cloud`). Design: **ADR-2606201610**.
 
 Three route-first views:
 
@@ -15,10 +15,10 @@ Three route-first views:
 ## Serverless / browser-side by design
 
 There is **no backend in this app**. Every read is a content-addressed or static
-snapshot served by the apex `etzhayyim-did-web` Worker:
+snapshot served by the apex `itonami-did-web` Worker:
 
 - `/organism/*.json` `*.kotoba.edn` — heartbeat snapshots from
-  `60-apps/etzhayyim-project-organism` (pulse ~6 s, joucho ~60 s, vitals ~1 h)
+  `60-apps/itonami-project-organism` (pulse ~6 s, joucho ~60 s, vitals ~1 h)
 - `/kotoba/<genesis>.root.json` — CommitDag head pointer
 - `/kotoba/blocks/<cid>` — content-addressed block (KV/IPFS), CID-verified
 
@@ -43,7 +43,7 @@ committed log (mimamori's golden fixture) and confirms tamper-detection fires.
 ```sh
 npm install
 # point the data plane at the live apex (snapshots are not local):
-#   in public/index.html, set window.__DATA_BASE__ = "https://etzhayyim.com"
+#   in public/index.html, set window.__DATA_BASE__ = "https://itonami.cloud"
 npm run dev        # amu compile --target wasm32-browser app → http://localhost:8710 (push-state)
 npm test           # shadow-cljs :node-test
 ```
@@ -55,8 +55,8 @@ npm run build      # amu compile --target wasm32-browser app → public/js
 npm run deploy:prod  # wrangler deploy  (Worker: kotodama-explorer)
 ```
 
-**Cut-over (decided 2026-06-20):** publish at `explorer.etzhayyim.com` first and
-verify, then flip the apex `etzhayyim-did-web` catch-all Service Binding
+**Cut-over (decided 2026-06-20):** publish at `explorer.itonami.cloud` first and
+verify, then flip the apex `itonami-did-web` catch-all Service Binding
 `YORO → EXPLORER` (one line in its `wrangler.toml` + `src/worker.ts`). The apex
 also needs to surface `/organism/*` (already serves `/kotoba/*`) and the heartbeat
 should emit `/organism/fleet.json` from `50-infra/murakumo/fleet.edn`.
@@ -64,7 +64,7 @@ should emit `/organism/fleet.json` from `50-infra/murakumo/fleet.edn`.
 ## Layout
 
 ```
-src/etzhayyim/explorer/
+src/itonami/explorer/
 ├── core.cljs             # bootstrap (React 18 root, router)
 ├── shell.cljs            # top nav + route-first view switch
 ├── router.cljs           # push-state router

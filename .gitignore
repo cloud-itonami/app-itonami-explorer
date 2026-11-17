@@ -3,8 +3,11 @@
 /out/
 .shadow-cljs/
 node_modules/
-
 # local dev data fixtures — production serves these from the apex Worker
 # (/organism/* and /kotoba/*), not from this app's bundle.
 /public/organism/
 /public/kotoba/
+/node_modules/
+/dist/
+/src-tauri/target/
+/src-tauri/gen/schemas/

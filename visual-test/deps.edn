@@ -1,4 +1,4 @@
-;; Visual test react loop for the etzhayyim explorer SPA (ADR-2606201610).
+;; Visual test react loop for the itonami explorer SPA (ADR-2606201610).
 ;;
 ;; Uses computer-use-clj's IComputer host capability (computeruse.computer +
 ;; computeruse.macos) for the real screenshot leg, a local Ollama gemma-4 vision
@@ -32,6 +32,6 @@
         org.clojure/data.json {:mvn/version "2.5.1"}}
  :aliases
  {;; offline self-test: mock computer + stub judge, no desktop/Ollama needed
-  :smoke {:main-opts ["-m" "etzhayyim.explorer.visual.react-loop" "--smoke"]}
+  :smoke {:main-opts ["-m" "itonami.explorer.visual.react-loop" "--smoke"]}
   ;; real run: macOS screencapture + live Ollama gemma vision over the dev server
-  :run {:main-opts ["-m" "etzhayyim.explorer.visual.react-loop"]}}}
+  :run {:main-opts ["-m" "itonami.explorer.visual.react-loop"]}}}

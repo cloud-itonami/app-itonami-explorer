@@ -35,7 +35,7 @@ kbb -M:sync         # live kotoba sync node on :8720 (XRPC sync.subscribe, trans
 `sync_node.clj` serves the live Datom tail over the XRPC endpoint
 
 ```
-GET http://localhost:8720/xrpc/com.etzhayyim.apps.kotoba.sync.subscribe?cursor=0
+GET http://localhost:8720/xrpc/cloud.itonami.apps.kotoba.sync.subscribe?cursor=0
 ```
 
 as **Server-Sent Events whose frames are transit+json** (the Datomic-client wire
@@ -74,7 +74,7 @@ Output (git-ignored, served to the browser):
 ```
 actor-registry/
 ├── deps.edn
-└── src/etzhayyim/registry/
+└── src/itonami/registry/
     ├── agent.clj      # ed25519 keygen, did:key encode/decode, base58, sign/verify
     └── register.clj   # signed genesis source-chains + witness attestation + MV fold
 ```

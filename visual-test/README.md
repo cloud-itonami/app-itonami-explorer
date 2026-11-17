@@ -1,6 +1,6 @@
 # visual-test — visual react loop (computer-use-clj + Ollama gemma)
 
-A visual feedback test loop for the etzhayyim explorer SPA (ADR-2606201610),
+A visual feedback test loop for the itonami explorer SPA (ADR-2606201610),
 built on **[computer-use-clj](https://github.com/com-junkawasaki/computer-use-clj)**.
 
 Per explorer route it:
@@ -55,7 +55,7 @@ any check fails (CI-friendly).
 ```
 visual-test/
 ├── deps.edn                         # computer-use-clj/src + kotoba codec on :paths (no git deps)
-└── src/etzhayyim/explorer/visual/
+└── src/itonami/explorer/visual/
     ├── vision.clj                   # Ollama vision judge (java.net.http; image → {:pass :saw})
     └── react_loop.clj               # the loop + IComputer hosts + kotoba.datom result log
 ```

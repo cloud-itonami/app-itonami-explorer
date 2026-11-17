@@ -1,4 +1,4 @@
-# MATURITY — etzhayyim-project-explorer
+# MATURITY — itonami-project-explorer
 
 Scorecard for the apex SPA (ADR-2606201610). Updated by the `/loop` coverage +
 maturity pass. Legend: ✅ done · 🟡 partial · ⏳ planned.

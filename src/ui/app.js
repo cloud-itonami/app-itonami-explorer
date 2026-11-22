@@ -3,6 +3,7 @@
 // DOM from text nodes only (no HTML strings) and makes no network request.
 import { LocalStore } from "./local-store.js";
 import { app } from "./app-def.js";
+import { bindForm } from "./guest-form.js";
 
 function storage() { try { return globalThis.localStorage ?? null; } catch { return null; } }
 const local = storage();
@@ -56,12 +57,15 @@ async function runAction(action, form) {
 }
 
 function actionCard(action) {
-  const form = el("form", { class: "card", onsubmit: (ev) => { ev.preventDefault(); runAction(action, form); } },
+  // The restricted-wasm-v1 sandbox has no allow-forms (B5): bindForm (itonami-lib) ties the button
+  // and Enter in a single-line field to runAction; no submit event is relied on.
+  const form = el("form", { class: "card" },
     el("h3", {}, action.label),
     action.help ? el("p", { class: "muted" }, action.help) : null,
     ...action.fields.map((field) => el("label", { for: `f-${action.name}-${field.name}` },
       el("span", {}, field.label + (field.required ? " *" : "")), fieldControl(action, field))),
-    el("button", { type: "submit" }, "実行"));
+    el("button", { type: "button", "data-submit": true }, "実行"));
+  bindForm(form, () => runAction(action, form));
   return form;
 }
 
@@ -86,7 +90,8 @@ function aboutView() {
   return el("section", { class: "card" },
     el("h3", {}, app.title),
     el("p", {}, app.description),
-    el("p", { class: "muted" }, "データはこの端末の中だけに保存されます（localStorage）。外部への通信はしません。"),
+    el("p", { class: "muted" }, local ? "データはこの端末の中だけに保存されます（localStorage）。外部への通信はしません。"
+      : "この版では、データを端末に保存できません（画面を閉じると消えます）。外部への通信はしません。"),
     el("p", { class: "muted mono" }, app.did),
     // Two-step reset instead of window.confirm(), which some OS WebViews do not show.
     el("button", { type: "button", class: "danger", onclick: () => {
@@ -118,5 +123,4 @@ function renderNotice() {
 }
 
 render();
-const tauri = globalThis.__TAURI__;
-if (tauri?.core?.invoke) tauri.core.invoke("awai_host_info").then((info) => { document.getElementById("env").textContent = info?.app ?? ""; }).catch(() => {});
+// The Tauri host info is shown by the host page (host.js): the sandboxed guest has no IPC.

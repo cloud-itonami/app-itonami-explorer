@@ -12,7 +12,8 @@ const CSP = "default-src 'none'; script-src 'self'; style-src 'self'; img-src 's
 
 async function distScripts() {
   const out = [];
-  for (const dir of ["dist", "dist/domain"]) for (const name of await readdir(resolve(root, dir))) if (name.endsWith(".js")) out.push(join(dir, name));
+  // The shipped host files and the guest's modules (inlined into dist/host-data.js).
+  for (const dir of ["dist", ".guest-modules", ".guest-modules/domain"]) for (const name of await readdir(resolve(root, dir))) if (name.endsWith(".js") && name !== "kotoba-client-runtime.js") out.push(join(dir, name));
   return out;
 }
 
@@ -21,7 +22,9 @@ test("descriptor declares local state and no external operation", async () => {
   assert.equal(d.schema, "kotoba.app.client-runtime.v1");
   assert.deepEqual(d.operations, []);
   assert.deepEqual(d.workers, []);
-  assert.equal(d["local-state"].adapter, "localstorage");
+  assert.equal(d.profile, "restricted-wasm-v1");
+  // The sandboxed guest has no storage until the runtime's host-mediated storage (KOTOBA-968).
+  assert.equal(d["local-state"].adapter, "memory");
 });
 
 test("shipped scripts contain no network API", async () => {
@@ -33,10 +36,13 @@ test("shipped scripts contain no network API", async () => {
   }
 });
 
-test("CSP is strict in the page and in the Tauri config", async () => {
-  assert.ok((await read("src/ui/index.html")).includes(CSP));
+test("CSP is strict in the host page and in the Tauri config; only the guest is admitted inline, by hash", async () => {
+  const html = await read("dist/index.html");
+  const csp = html.match(/Content-Security-Policy" content="([^"]+)"/)[1];
   const conf = JSON.parse(await read("src-tauri/tauri.conf.json"));
-  assert.ok(conf.app.security.csp.startsWith(CSP));
+  assert.equal(conf.app.security.csp, csp);
+  assert.match(csp, /^default-src 'none'; script-src 'self' 'sha256-[^']+' 'sha256-[^']+'; style-src 'self' 'sha256-[^']+'; img-src 'self' data:; connect-src ipc: http:\/\/ipc\.localhost;/);
+  for (const tag of html.matchAll(/<script\b[^>]*>/gi)) assert.match(tag[0], /src=/);
   assert.equal(conf.$schema, "https://schema.tauri.app/config/3");
 });
 
@@ -53,11 +59,11 @@ test("the Tauri host grants only the read-only host-info command", async () => {
 
 test("release manifest pins every shipped file", async () => {
   const release = JSON.parse(await read("dist/release.json"));
-  for (const file of await distScripts()) assert.ok(release.files[file.replace(/^dist\//, "")], `${file} is not pinned`);
+  for (const name of await readdir(resolve(root, "dist"))) if (name !== "release.json") assert.ok(release.files[name], `${name} is not pinned`);
 });
 
 test("every UI action is wired to a function and every collection is declared", async () => {
-  const { app } = await import(resolve(root, "dist/app-def.js"));
+  const { app } = await import(resolve(root, ".guest-modules/app-def.js"));
   assert.ok(app.title && app.did && app.storageKey);
   assert.ok(app.actions.length > 0);
   for (const action of app.actions) {
@@ -68,7 +74,7 @@ test("every UI action is wired to a function and every collection is declared", 
 });
 
 test("the local store round-trips through storage and replaces on rewrite", async () => {
-  const { LocalStore } = await import(resolve(root, "dist/local-store.js"));
+  const { LocalStore } = await import(resolve(root, ".guest-modules/local-store.js"));
   const mem = new Map();
   const storage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
   const a = new LocalStore({ did: "did:example:t", storage, key: "t" });
@@ -87,7 +93,7 @@ test("the local store round-trips through storage and replaces on rewrite", asyn
 });
 
 test("sealed records are returned only to dids in their read-cap", async () => {
-  const { LocalStore } = await import(resolve(root, "dist/local-store.js"));
+  const { LocalStore } = await import(resolve(root, ".guest-modules/local-store.js"));
   const mem = new Map();
   const storage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
   const owner = new LocalStore({ did: "did:example:owner", storage, key: "s" });

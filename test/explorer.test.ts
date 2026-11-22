@@ -1,7 +1,7 @@
 import { describe, it, beforeEach } from "node:test";
 import { expect } from "./expect.mjs";
-import { LocalStore } from "../dist/local-store.js";
-import { importLog, verifyLog, listEntities, browseEntity, queryDatoms, canonicalJson, txCid, readEdn, parseLog } from "../dist/domain/index.js";
+import { LocalStore } from "../.guest-modules/local-store.js";
+import { importLog, verifyLog, listEntities, browseEntity, queryDatoms, canonicalJson, txCid, readEdn, parseLog } from "../.guest-modules/domain/index.js";
 
 // Oracle vectors: python3 3.15.0 json.dumps(sort_keys=True, separators=(",",":"), ensure_ascii=False)
 // + hashlib.sha256, 2026-11-17 (AWAI-3079 .agent-output/oracle/datom-cid-vectors.json).
